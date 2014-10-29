@@ -1,10 +1,10 @@
 {
   "dependencies": {
     "faye-websocket": {
-      "version": "https://github.com/meteor/faye-websocket-node/tarball/ccc180998b1396093c24d0df7ebc1d199c276552",
+      "version": "https://github.com/meteor/faye-websocket-node/tarball/fe3910aad92b57d0d5457216fe4ec60f5f7b0295",
       "dependencies": {
         "websocket-driver": {
-          "version": "0.3.4"
+          "version": "git+https://github.com/faye/websocket-driver-node#042e33aebf53290cd9751275ad5b0cebd78e1c11"
         }
       }
     },
@@ -13,6 +13,14 @@
       "dependencies": {
         "node-uuid": {
           "version": "1.3.3"
+        },
+        "faye-websocket": {
+          "version": "0.7.2",
+          "dependencies": {
+            "websocket-driver": {
+              "version": "0.3.6"
+            }
+          }
         }
       }
     }
