@@ -111,6 +111,17 @@ _.extend(LivedataTest.ClientStream.prototype, {
     }
   },
 
+  _getProxyUrl: function (targetUrl) {
+    var self = this;
+    // Similar to code in tools/http-helpers.js.
+    var proxy = process.env.HTTP_PROXY || process.env.http_proxy || null;
+    // if we're going to a secure url, try the https_proxy env variable first.
+    if (targetUrl.match(/^wss:/)) {
+      proxy = process.env.HTTPS_PROXY || process.env.https_proxy || proxy;
+    }
+    return proxy;
+  },
+
   _launchConnection: function () {
     var self = this;
     self._cleanup(); // cleanup the old socket, if there was one.
@@ -120,15 +131,19 @@ _.extend(LivedataTest.ClientStream.prototype, {
     // connection.
     var FayeWebSocket = Npm.require('faye-websocket');
 
+    var targetUrl = toWebsocketUrl(self.endpoint);
+    var proxyUrl = self._getProxyUrl(targetUrl);
+
     // We would like to specify 'ddp' as the subprotocol here. The npm module we
     // used to use as a client would fail the handshake if we ask for a
     // subprotocol and the server doesn't send one back (and sockjs doesn't).
     // Faye doesn't have that behavior; it's unclear from reading RFC 6455 if
     // Faye is erroneous or not.  So for now, we don't specify protocols.
     var client = self.client = new FayeWebSocket.Client(
-      toWebsocketUrl(self.endpoint),
+      targetUrl,
       [/*no subprotocols*/],
-      {headers: self.headers}
+      {headers: self.headers,
+       proxy: proxyUrl}
     );
 
     self._clearConnectionTimer();
